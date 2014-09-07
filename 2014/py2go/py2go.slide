@@ -1,0 +1,194 @@
+De Python à Go?
+Découvrir l'écosystème Go
+
+
+Balthazar Rouberol
+
+brouberol@imap.cc
+
+@brouberol
+
+[[http://brouberol-gotalks.appspot.com/2014/py2go/py2go.slide][http://brouberol-gotalks.appspot.com/2014/py2go/]]
+
+* But de la présentation
+
+Vous donner un aperçu de la philosophie de Go, de son écosystème, et de ses outils (plus que de sa syntaxe) afin d'aider les curieux à sauter le pas.
+
+Présentation disponible à [[http://brouberol-gotalks.appspot.com/2014/py2go/py2go.slide][http://brouberol-gotalks.appspot.com/2014/py2go/]]
+
+.image img/baby.jpg
+
+
+* Go
+
+Langage récemment développé par Google: v1 annoncée en mars 2012.
+
+- langage statique (typage inféré ou explicite)
+
+    i := 0     // inféré
+    int i = 0  // explicite
+
+- impératif
+- concurrent: goroutines, `chan` (type) `go` et `select` (keywords)
+- garbage collecté
+- compilateur *très* rapide (claim: 80-90% plus rapide que compiler du C)
+- actuellement v1.3, nouvelle version ~ tous les 6 mois
+- langage stable jusqu'à Go v2
+
+
+* Philosophie
+
+Le _zen_ _of_ _Python_ s'applique bien à Go ([[http://talks.golang.org/2012/zen.slide][Go and the Zen of Python]])
+
+Exemple: "Simple is better than complex"
+
+- Très peu de mots clés (25)
+- Déclaration d'interface implicites
+- Pas de constructeurs
+- Pas d'héritage
+- Pas d'exceptions
+- Gestion minimaliste des pointeurs
+
+
+* Pourquoi Go ?
+
+Go est jeune (4 ans) mais très à la mode.
+
+.image img/4years-graph.png
+
+mais...
+
+
+* Nombre de dépôts Github par langage
+
+Go arrive 15e, Python 5e.
+
+.image img/popularity.png
+
+
+* Applications courantes
+
+
+- Daemons
+- Commandes shell
+- Applications web
+- Jeux
+- Management de cluster/cloud
+- ...
+
+
+* Pourquoi Go depuis Python ?
+
+- Rapidité
+- _Type_ _safety_ (IMO: utile quand la taille de la codebase / de l'équipe augmente)
+- L'écritude de code concurrent est très facile (IMO: même avec l'arrivée d' `asyncio` )
+- Déploiement très facile: déployer un binaire VS déployer du code
+
+.image img/plane.jpg
+
+
+* Et mon confort?
+
+- Facile de passer de l'un à l'autre: leur philosophies sont proches
+- Beaucoup d'outils Python ont leur équivalent en Go (pylint, pyflakes, coverage, nosetests/py.test, ...)
+
+
+* Qui l'utilise?
+
+- Anchor
+- BBC World News
+- Bit.ly
+- *Canonical*
+- Carbon Games
+- CloudFlare
+- *Docker*
+- *Google*
+- Heroku
+- Iron.io
+- *SoundCloud*
+
+
+* «Important batteries included»
+
+Bibliothèque standard fournie: *133* modules ([[http://golang.org/pkg/][http://golang.org/pkg/]])
+
+- `net/http`
+- `encoding/json`
+- `container/list`
+- `compress/lzw`
+- `sort`
+- `database/sql`
+- `html/template`
+- ...
+
+*Note*: Python2.7: *297* modules & Python3.4: *233* modules
+
+
+* «Important batteries included»
+
+Les outils de développement font partie du langage.
+
+- `go` `build`
+- `go` `run` ⬄ `python` `somefile.py`
+- `go` `install` ⬄ `python` `setup.py` `install`
+- `go` `fmt` ⬄ `pep8/flake8`
+- `go` `test` ⬄  `nose/py.test` `+` `coverage`
+- `go` `get` ⬄ `pip`
+- `go` `vet` ⬄ `pylint`
+- `go` `doc` ⬄ `help(module)`
+- `go` `fix` ⬄ `2to3`
+
+Facilité d'installation: ce ne sont que des commandes du binaire `go`.
+
+
+* Hello world
+.play code/hello.go
+
+Dans le shell:
+
+    $ go run hello.go
+    Hello, 世界
+
+.image img/gogo.jpg
+
+
+* Hello world dans le browser
+.play code/web.go
+
+
+* Hello world concurrent
+.play code/asynchello.go
+
+
+* Imports & packaging
+
+    $ go get github.com/gorilla/mux
+    $ ls $GOPATH/src/github.com | grep gorilla
+    gorilla
+
+.code code/gorilla.go
+
+
+* Mes outils préférés
+
+- `goimports`: ajoute et enlève les imports automatiquement
+- `present`: le système de slide (très minimaliste et simple d'utilisation) derrière cette présentation
+- `Watch`: lance une commande dès qu'un fichier dans le dossier surveillé est modifé. Très utile pour du TDD!
+
+    $ Watch -t go test github.com/brouberol/todo...
+
+.image img/run.png
+
+
+* Conclusion
+
+Go est un langage très minimaliste, bien qu'assez complet. Sa philosophie se rapproche souvent de celle de Python.
+
+
+- ⊕ Simple à apprendre
+- ⊕ API stable
+- ⊕ Compilation et exécution rapides
+- ⊕ Écriture de code concurrent facile
+- ⊕ Communauté réactive (Google Group [[https://groups.google.com/forum/#!forum/golang-nuts][go-nuts]], [[http://www.reddit.com/r/golang/][/r/golang]], ...)
+- ⊖ Manque de structures de données/collections au sein du langage (`set`, `frozenset`, `deque`, etc)
+- ⊖ Système de packaging trop simpliste
