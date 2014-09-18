@@ -192,3 +192,12 @@ Go est un langage très minimaliste, bien qu'assez complet. Sa philosophie se ra
 - ⊕ Communauté réactive (Google Group [[https://groups.google.com/forum/#!forum/golang-nuts][go-nuts]], [[http://www.reddit.com/r/golang/][/r/golang]], ...)
 - ⊖ Manque de structures de données/collections au sein du langage (`set`, `frozenset`, `deque`, etc)
 - ⊖ Système de packaging trop simpliste
+
+
+* Pour finir
+
+«Go feels under-engineered because it only solves real problems»
+
+«Go turned out to be a language for solving real problems rather than a language filled with beautiful tools, and so you build real solutions rather than finding excuses to use your beautiful tools.»
+
+[[http://robnapier.net/go-is-a-shop-built-jig][http://robnapier.net/go-is-a-shop-built-jig]]
