@@ -1,0 +1,91 @@
+Découverte du monde merveilleux du backend web.
+Comment avoir suffisamment à faire pour laisser le JS aux autres.
+
+Balthazar Rouberol
+
+Apéritif reptilien de Lugdunum, avril 2014
+
+brouberol@imap.cc
+
+@brouberol
+
+* Remarques
+
+- Slides disponibles sur [[http://brouberol-talks.appspot.com/2015/webstack/webstack.slide][http://frama.link/webstack]]
+- Un tas de fichiers de configuration sont inclus en annexe
+- Interrompez moi quand vous voulez: discussion >>> monologue
+- Je n'aborderais pas le PaaS: je n'y connais rien, et les outils sont souvent limités/imposés.
+- ♡ = mon choix personnel
+
+* Une application ouèbe Python en production
+
+.image img/stack-small.png
+
+[[http://www.fullstackpython.com/theme/img/full-stack-python-map.png][http://www.fullstackpython.com/theme/img/full-stack-python-map.png]]
+
+
+* ...
+
+.image img/homer.gif
+
+
+* Qu'est ce qu'il me faut au minimum?
+
+- Une application python/WSGI (Flask, Django, Pyramid, Morepath, custom...)
+- Un serveur WSGI (uWSGI, Gunicorn, ...)
+- Un serveur web (nginx, Apache, lighttpd, ...)
+
+.image img/wsgi-server.png
+
+
+* Application Python/WSGI
+
+- [[http://flask.readthedocs.org/][Flask]] ♡
+- [[http://djangoproject.com/][Django]] ♡
+- [[http://pyramid.readthedocs.org/en/latest/][Pyramid]]
+- [[http://morepath.readthedocs.org/en/latest/][Morepath]]
+- [[http://bottle.readthedocs.org/en/latest/][Bottle]]
+- [[http://www.cherrypy.org/][CherryPy]]
+- [[http://www.web2py.com/][web2py]]
+- ... [[https://wiki.python.org/moin/WebFrameworks/][https://wiki.python.org/moin/WebFrameworks/]]
+
+
+Le choix du framework est une question de *goût*, sans influence sur la performance.
+
+Les benchmarks "Hello world" sont sans intérêt.
+
+
+* Serveur WSGI
+
+_Web_ _Server_ _Gateway_ _Interface_: interface standard entre un serveur web et une app WSGI
+
+*Flexibilité* */* *portablité*
+
+- [[http://uwsgi.readthedocs.org/en/latest/][uWSGI]] ♡
+- [[http://gunicorn.org/][gunicorn]]
+- [[http://www.cherrypy.org/][CherryPy]]
+- [[http://gevent.org/servers.html][gevent]]
+- [[http://modwsgi.readthedocs.org/en/latest/][mod_wsgi]] (w/ Apache), surtout pas mod_python, qui n'est pas WSGI!
+
+*Scaling*
+
+C'est le rôle du serveur WSGI que de gérer des milliers de requêtes, pas du framework!
+Un serveur WSGI peut servir des requêtes de plusieurs applications WSGI (identiques ou différentes).
+
+[[https://www.python.org/dev/peps/pep-3333/][https://www.python.org/dev/peps/pep-3333/]]
+
+
+* Serveur web
+
+- Recevoir les requêtes HTTP(S), émettre les réponses HTTP(S)
+- Servir du contenu statique (HTML, JS, CSS, images, fonts)
+- SSL/TLS
+- HSTS (HTTP Strict Transport Security): force la redirection HTTP → HTTPS
+- Définition de hosts virtuels
+- ..., ....., .........
+
+- [[http://nginx.org/][nginx]] ♡
+- [[https://httpd.apache.org/][Apache]]
+- [[http://cherokee-project.com/][Cherokee]]
+- [[http://gwan.com/][G-WAN]]
+
