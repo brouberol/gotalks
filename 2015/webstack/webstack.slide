@@ -1,23 +1,34 @@
-Découverte du monde merveilleux du backend web.
+Découverte du monde merveilleux du backend web python.
 Comment avoir suffisamment à faire pour laisser le JS aux autres.
 
 Balthazar Rouberol
 
-Apéritif reptilien de Lugdunum, avril 2014
+Apéritif reptilien de Lugdunum, avril 2015
 
 brouberol@imap.cc
 
 @brouberol
 
-* Remarques
+
+* But de la présentation
+
+- Présenter les types d'outils communément utilisés dans le backend d'une application web Python
+- Montrer quelques bonnes pratiques
+- Vous donner des ressources pour aller fouiller et aller plus loin
+
+
+* Préambule
 
 - Slides disponibles sur [[http://brouberol-talks.appspot.com/2015/webstack/webstack.slide][http://frama.link/webstack]]
 - Un tas de fichiers de configuration sont inclus en annexe
 - Interrompez moi quand vous voulez: discussion >>> monologue
-- Je n'aborderais pas le PaaS: je n'y connais rien, et les outils sont souvent limités/imposés.
+- Je n'ai pas testé tous les outils listés!
 - ♡ = mon choix personnel
+- Vous n'avez sûrement pas besoin de tout ce dont on va parler, selon votre application!
+- Je n'aborderais pas le PaaS: je n'y connais rien, et les outils sont souvent limités/imposés.
+- Je n'aborderais pas le déploiement, qui mérite une présentation (ou mille) à lui seul
 
-* Une application ouèbe Python en production
+* Une application web Python en production
 
 .image img/stack-small.png
 
@@ -67,9 +78,7 @@ _Web_ _Server_ _Gateway_ _Interface_: interface standard entre un serveur web et
 - [[http://gevent.org/servers.html][gevent]]
 - [[http://modwsgi.readthedocs.org/en/latest/][mod_wsgi]] (w/ Apache), surtout pas mod_python, qui n'est pas WSGI!
 
-*Scaling*
-
-C'est le rôle du serveur WSGI que de gérer des milliers de requêtes, pas du framework!
+*Scaling*: C'est le rôle du serveur WSGI (entre autres) que de gérer des milliers de requêtes, pas du framework!
 Un serveur WSGI peut servir des requêtes de plusieurs applications WSGI (identiques ou différentes).
 
 [[https://www.python.org/dev/peps/pep-3333/][https://www.python.org/dev/peps/pep-3333/]]
@@ -82,6 +91,7 @@ Un serveur WSGI peut servir des requêtes de plusieurs applications WSGI (identi
 - SSL/TLS
 - HSTS (HTTP Strict Transport Security): force la redirection HTTP → HTTPS
 - Définition de hosts virtuels
+- Communication via websockets
 - ..., ....., .........
 
 - [[http://nginx.org/][nginx]] ♡
@@ -89,3 +99,261 @@ Un serveur WSGI peut servir des requêtes de plusieurs applications WSGI (identi
 - [[http://cherokee-project.com/][Cherokee]]
 - [[http://gwan.com/][G-WAN]]
 
+
+* Petite parenthèse: les certificats SSL (ENCRYPT ALL THE THINGS!)
+
+[[https://www.startssl.com/][https://www.startssl.com/]] ♡
+
+- Classe 1 (gratuit): SSL sur un sous-domaine (au minimum!)
+- Classe 2 ($): SSL sur un domaine entier
+- EV (Extended Validation) ($$$): SSL sur un domaine entier, et la fameuse "barre verte"
+.image img/ssl-ev.jpg
+
+[[https://letsencrypt.org][https://letsencrypt.org]]: Mozilla, Akamai, EFF, Cisco... Utilisable vers mi-2015
+
+  $ sudo apt-get install lets-encrypt
+  $ lets-encrypt example.com
+  $ wget https://example.com
+
+Superbe conférence sur SSL/TLS, comment configurer nginx/Apache avec SSL, etc: [[http://www.iletaitunefoisinternet.fr/ssltls-benjamin-sonntag/][http://www.iletaitunefoisinternet.fr/ssltls-benjamin-sonntag/]]
+
+
+* Petite parenthèse 2: virtualenv en production?
+
+Un avis modéré [[https://www.reddit.com/r/Python/comments/2grmnn/virtualenv_on_production/][sur les internets]] :
+
+  will you run multiple instances of your project on the same machine? -> yes
+  otherwise -> yes
+
+Virtualenv est bien intégré par les serveurs WSGI. Mon avis: *bonne* *pratique*.
+
+*Un* *peu* *de* *lecture*
+
+- [[http://dangoldin.com/2014/02/10/using-virtualenv-in-production/][http://dangoldin.com/2014/02/10/using-virtualenv-in-production/]]
+- [[https://pythonrants.wordpress.com/2013/12/06/why-i-hate-virtualenv-and-pip/][https://pythonrants.wordpress.com/2013/12/06/why-i-hate-virtualenv-and-pip/]]
+
+
+* Base de données relationnelle
+
+Si vous n'avez pas de problème de scaling, prenez celle que vous voulez.
+
+Les performances viennent avant tout d'un *bon* *schéma* et de *bons* *index*, pas directement de votre SGBD.
+
+- [[http://www.postgresql.org/][PostgreSQL]] ♡
+- [[https://mariadb.org/][MariaDB]]
+- [[https://www.mysql.com/][MySQL]]
+- [[https://sqlite.org/][SQLite]] (parfois, c'est suffisant)
+
+
+* Cache
+
+Entrepôt pour des données éphémères, mais complexes/lourdes à calculer:
+
+- Résultats de grosses requêtes SQL
+- Données géolocalisées
+- Fragments HTML
+- Verrous distribués
+- ...
+- [[http://redis.io][Redis]] ♡
+- [[http://www.memcached.org/][Memcached]]
+
+    There are only two hard things in Computer Science: cache invalidation and naming things.
+
+    -- Phil Karlton
+
+
+* Redis vs Memcached
+
+[[https://stackoverflow.com/questions/10558465/memcached-vs-redis][https://stackoverflow.com/questions/10558465/memcached-vs-redis]]
+
+Redis.
+
+- Beaucoup plus de [[http://redis.io/topics/data-types-intro][structures de données]] que du simple `key:` `value` (sets, sorted sets, lists, hashes...)
+- Cluster (master/slaves) + automatic failover
+- Pub/Sub
+- Transactions
+- Scripting en Lua (ça doit être cool, parce qu'il y a _Lua_ dedans)
+- Grande majorité des [[http://redis.io/commands/][opérations]] sont atomiques (thread safety)
+
+
+* Tâches de fond
+
+Système distribué permettant d'envoyer des tâches asynchrones à des workers, en temps réel ou en différé.
+
+.image img/worker-queue.jpeg
+
+* Tâches de fond: les frameworks
+
+  Q: What deserves to be a background job?
+  A: Anything that's not fast enough to be done synchronously in a safe and repeateable fashion.
+
+- [[http://celery.readthedocs.org/][Celery]] ♡
+- [[http://python-rq.org/][Redis Queue / RQ]]
+
+Celery vs RQ ≃ Django vs Flask
+
+Mesdames et messieurs, pour plus d'informations (et sans aucune gène):
+[[http://www.brl.ovh/slides/celery-intro/?theme=simple#/][http://brl.ovh/slides/celery-intro]]
+
+
+* L'intégration des tâches de fond dans l'application WSGI
+
+Une seule et même codebase.
+
+  - app1/
+      - app1/tasks.py
+      - app1/models.py
+  - app2/
+      - app2/tasks.py
+      - app2/models.py
+
+⊕ Plus facile à déployer
+⊕ L'application WSGI frontend peut lancer des tâches de fond
+⊖ Les fichiers statiques (css, js, etc) sont inutilement déployés sur les workers
+
+Intégration de Celery avec:
+
+- [[http://celery.readthedocs.org/en/latest/django/first-steps-with-django.html][Django]]
+- [[http://flask.pocoo.org/docs/0.10/patterns/celery/][Flask]]
+- [[https://hynek.me/articles/using-celery-with-pyramid/][Pyramid]]
+
+
+* File de message (Message queue)
+
+- [[http://redis.io][Redis]] ♡ (Pub/Sub)
+- [[https://www.rabbitmq.com/][RabbitMQ]]
+
+Les deux s'intègrent parfaitement avec Celery: [[http://celery.readthedocs.org/en/latest/getting-started/brokers/index.html][http://celery.readthedocs.org/en/latest/getting-started/brokers]]
+
+Redis Queue impose redis. Vous l'aviez probablement deviné, futés comme vous êtes.
+
+
+* Moteur de recherche
+
+Permet de faire des recherches complexes, facettées, textuelles.
+
+.image img/mapado-searchbar.png
+
+- [[https://www.elastic.co/][elasticsearch]] ♡
+- [[https://lucene.apache.org/solr/][Solr]]
+- [[http://www.postgresql.org/docs/current/static/textsearch.html][PostgreSQL]] (recherche textuelle uniquement, mais bonnes performances!)
+- [[http://mongodb.org][mongoDB]] (recherche textuelle uniquement, mais bonnes performances!)
+
+
+Je n'en dis pas plus, j'ai très peu d'expérience dans le domaine, désolé.
+
+*Un* *peu* *de* *lecture*
+
+- [[http://www.elastic.co/guide/en/elasticsearch/guide/current/index.html][http://www.elastic.co/guide/en/elasticsearch/guide/current/index.html]]
+- [[http://www.meetup.com/elasticsearchfr/][Meetup elasticsearch France]] (des évènements organisés à Lyon).
+
+* Base de données NoSQL
+
+Permet de stocker des millions/milliards de *documents* "autosuffisants".
+
+Montée en charge horizontale via du _sharding_ (ajouter des serveurs) → Webscaling ™
+
+- [[http://mongodb.org][mongoDB]]
+- [[https://cassandra.apache.org/][Cassandra]]
+- [[https://www.elastic.co/][elasticsearch]]
+- [[http://redis.io][Redis]]
+- [[https://couchdb.apache.org/][CouchDB]]
+
+
+* Quelque conseils sur le NoSQL
+
+- Vos données sont relationnelles? Mettez les dans une BDD relationnelle. Ce n'est pas assez cool? Certes, mais ça va marcher.
+- Vous avez un peu de non relationnel dans vos données relationnelles? Utilisez les champs [[http://www.postgresql.org/docs/current/static/hstore.html][HStore]] de PostgreSQL.
+- Vous avez des millions de données non relationnelles (log, notifications mobile, documents administratifs, etc)?  Choisissez une base NoSQL.
+
+*Un* *peu* *de* *lecture*
+
+- [[http://thebuild.com/presentations/pg-as-nosql-pgday-fosdem-2013.pdf][http://thebuild.com/presentations/pg-as-nosql-pgday-fosdem-2013.pdf]]
+- Une très bonne comparaison de 20 bases NoSQL: [[http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis][http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis]]
+
+
+* Cache web
+
+Cache des pages HTML pour éviter qu'une requête n'atteigne votre serveur web.
+
+.image img/varnish.png
+
+Exemple: page d'accueil d'un site de presse grand public pour un utilisateur anonyme.
+
+- [[https://www.varnish-cache.org][Varnish]]
+- [[http://nginx.org/][nginx]]
+- [[http://www.squid-cache.org/][Squid]]
+- [[http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/][Polipo]]
+
+
+* Superviseur
+
+Daemonise, monitore et contrôle un ensemble de processus: relance le processus en cas de crash, redirige les logs stdout/stderr, etc
+
+- [[http://supervisord.readthedocs.org][Supervisor]] ♡
+- [[http://circus.readthedocs.org/en/0.11.1/][Circus]]
+
+  supervisor> status
+  beat                             RUNNING    pid 1501, uptime 8 days, 23:57:29
+  celery_worker                    RUNNING    pid 32060, uptime 9 days, 4:57:17
+  flower                           RUNNING    pid 32406, uptime 9 days, 4:38:36
+  supervisor> stop flower
+  flower: stopped
+
+
+*Un* *peu* *de* *lecture*:
+- [[https://github.com/TAKEALOT/nodervisor][Nodervisor]]: interface web affichant le status de programmes supervisés par supervisor, sur des machines distribuées: Permet d'avoir une vue sur tous vos processus supervisés!
+- [[http://supervisord.org/plugins.html][Plugins supervisor]]: contrôle de la mémoire de chaque processus, alerte mail/SMS en cas de crash, etc
+
+
+* Nodervisor
+
+.image img/nodervisor.png
+
+
+* Log des erreurs / exceptions
+
+Système centralisant les rapports d'erreur / d'exceptions de vos applications, permettant de rejouer les requêtes, de stocker le contexte, etc.
+
+- [[https://getsentry.com/welcome/][Sentry]] (tout type d'application, tout langage)
+- [[https://opbeat.com/][Opbeat]] (Django uniquement, monitore aussi les performances de votre application)
+
+
+* Index PyPI privé
+
+Permet d'héberger des packages python privés au sein de votre entreprise, tout en répliquant PyPI localement.
+
+- [[http://doc.devpi.net/latest/][devpi]] ♡
+- [[https://github.com/pypiserver/pypiserver][PyPIServer]]
+
+  $ export PIP_INDEX_URL=http://myprivatepypi.example.com
+  $ pip install someprivatepackage
+  $ pip install requests
+
+
+* Autres sujets (non abordés, faute de temps et d'expérience)
+
+- Logging/Analyse de log: (rsyslog → elasticsearch → [[https://www.elastic.co/products/logstash][Logstash]]) / [[https://www.loggly.com/][Loggly]]
+- Monitoring: Munin, nagios, graphite... Quelqu'un connaît t-il l'outil magique?
+- Load balancer (répartit les requêtes entres les serveurs): HaProxy
+
+
+* Conclusions
+
+Il peut y avoir *beaucoup* d'outils à mettre en place. Essayez de pas céder à l'effet de mode et mutualisez les outils déjà installés.
+
+Exemples:
+
+- Redis peut servir de cache, de file de message et de base NoSQL
+- PostgreSQL peut servir de base relationnelle, de base NoSQL et moteur de recherche textuelle
+- nginx peut servir de serveur web et de cache web
+
+Pourquoi?
+
+- Moins d'outils = infrastructure moins complexe = maintenance plus facile
+- Courbe d'apprentissage plus faible
+
+
+* Conclusions
+
+Réfléchissez à la possibilité d'utiliser des services externes si nécessaire
