@@ -1,4 +1,4 @@
-Découverte du monde merveilleux du backend web python.
+Le backend d'une application  web python
 Comment avoir suffisamment à faire pour laisser le JS aux autres.
 
 Balthazar Rouberol
@@ -10,17 +10,16 @@ brouberol@imap.cc
 @brouberol
 
 
-* But de la présentation
+* ❦ But de la présentation ❦
 
 - Présenter les types d'outils communément utilisés dans le backend d'une application web Python
-- Montrer quelques bonnes pratiques
-- Vous donner des ressources pour aller fouiller et aller plus loin
+- Discuter de quelques bonnes pratiques
+- Vous donner des ressources pour fouiller et aller plus loin
 
 
-* Préambule
+* ❦ Préambule ❦
 
 - Slides disponibles sur [[http://brouberol-talks.appspot.com/2015/webstack/webstack.slide][http://frama.link/webstack]]
-- Un tas de fichiers de configuration sont inclus en annexe
 - Interrompez moi quand vous voulez: discussion >>> monologue
 - Je n'ai pas testé tous les outils listés!
 - ♡ = mon choix personnel
@@ -28,7 +27,7 @@ brouberol@imap.cc
 - Je n'aborderais pas le PaaS: je n'y connais rien, et les outils sont souvent limités/imposés.
 - Je n'aborderais pas le déploiement, qui mérite une présentation (ou mille) à lui seul
 
-* Une application web Python en production
+* ❦ Une application web Python en production ❦
 
 .image img/stack-small.png
 
@@ -40,33 +39,32 @@ brouberol@imap.cc
 .image img/homer.gif
 
 
-* Qu'est ce qu'il me faut au minimum?
+* ❦ Qu'est ce qu'il me faut au minimum? ❦
 
-- Une application python/WSGI (Flask, Django, Pyramid, Morepath, custom...)
-- Un serveur WSGI (uWSGI, Gunicorn, ...)
 - Un serveur web (nginx, Apache, lighttpd, ...)
+- Un serveur WSGI (uWSGI, Gunicorn, ...)
+- Une application python/WSGI (Flask, Django, Pyramid, Morepath, custom...)
 
 .image img/wsgi-server.png
 
 
-* Application Python/WSGI
+* ❦ Serveur web ❦
 
-- [[http://flask.readthedocs.org/][Flask]] ♡
-- [[http://djangoproject.com/][Django]] ♡
-- [[http://pyramid.readthedocs.org/en/latest/][Pyramid]]
-- [[http://morepath.readthedocs.org/en/latest/][Morepath]]
-- [[http://bottle.readthedocs.org/en/latest/][Bottle]]
-- [[http://www.cherrypy.org/][CherryPy]]
-- [[http://www.web2py.com/][web2py]]
-- ... [[https://wiki.python.org/moin/WebFrameworks/][https://wiki.python.org/moin/WebFrameworks/]]
+- Recevoir les requêtes HTTP(S), émettre les réponses HTTP(S)
+- Servir du contenu statique (HTML, JS, CSS, images, fonts)
+- SSL/TLS
+- Proxy
+- Définition de hosts virtuels
+- Communication via websockets
+- ..., ....., .........
+
+- [[http://nginx.org/][nginx]] ♡
+- [[https://httpd.apache.org/][Apache]]
+- [[http://cherokee-project.com/][Cherokee]]
+- [[http://gwan.com/][G-WAN]]
 
 
-Le choix du framework est une question de *goût*, sans influence sur la performance.
-
-Les benchmarks "Hello world" sont sans intérêt.
-
-
-* Serveur WSGI
+* ❦ Serveur WSGI ❦
 
 _Web_ _Server_ _Gateway_ _Interface_: interface standard entre un serveur web et une app WSGI
 
@@ -84,48 +82,32 @@ Un serveur WSGI peut servir des requêtes de plusieurs applications WSGI (identi
 [[https://www.python.org/dev/peps/pep-3333/][https://www.python.org/dev/peps/pep-3333/]]
 
 
-* Serveur web
 
-- Recevoir les requêtes HTTP(S), émettre les réponses HTTP(S)
-- Servir du contenu statique (HTML, JS, CSS, images, fonts)
-- SSL/TLS
-- HSTS (HTTP Strict Transport Security): force la redirection HTTP → HTTPS
-- Définition de hosts virtuels
-- Communication via websockets
-- ..., ....., .........
+* ❦ Application Python/WSGI ❦
 
-- [[http://nginx.org/][nginx]] ♡
-- [[https://httpd.apache.org/][Apache]]
-- [[http://cherokee-project.com/][Cherokee]]
-- [[http://gwan.com/][G-WAN]]
+- [[http://flask.readthedocs.org/][Flask]] ♡
+- [[http://djangoproject.com/][Django]] ♡
+- [[http://pyramid.readthedocs.org/en/latest/][Pyramid]]
+- [[http://morepath.readthedocs.org/en/latest/][Morepath]]
+- [[http://bottle.readthedocs.org/en/latest/][Bottle]]
+- [[http://www.cherrypy.org/][CherryPy]]
+- [[http://www.web2py.com/][web2py]]
+- ... [[https://wiki.python.org/moin/WebFrameworks/][https://wiki.python.org/moin/WebFrameworks/]]
 
 
-* Petite parenthèse: les certificats SSL (ENCRYPT ALL THE THINGS!)
+Le choix du framework est une question de *goût*, sans influence sur la performance.
 
-[[https://www.startssl.com/][https://www.startssl.com/]] ♡
-
-- Classe 1 (gratuit): SSL sur un sous-domaine (au minimum!)
-- Classe 2 ($): SSL sur un domaine entier
-- EV (Extended Validation) ($$$): SSL sur un domaine entier, et la fameuse "barre verte"
-.image img/ssl-ev.jpg
-
-[[https://letsencrypt.org][https://letsencrypt.org]]: Mozilla, Akamai, EFF, Cisco... Utilisable vers mi-2015
-
-  $ sudo apt-get install lets-encrypt
-  $ lets-encrypt example.com
-  $ wget https://example.com
-
-Superbe conférence sur SSL/TLS, comment configurer nginx/Apache avec SSL, etc: [[http://www.iletaitunefoisinternet.fr/ssltls-benjamin-sonntag/][http://www.iletaitunefoisinternet.fr/ssltls-benjamin-sonntag/]]
+Les benchmarks "Hello world" sont sans intérêt.
 
 
-* Petite parenthèse 2: virtualenv en production?
+* ❦ Bonne pratique: virtualenv en production? ❦
 
 Un avis modéré [[https://www.reddit.com/r/Python/comments/2grmnn/virtualenv_on_production/][sur les internets]] :
 
   will you run multiple instances of your project on the same machine? -> yes
   otherwise -> yes
 
-Virtualenv est bien intégré par les serveurs WSGI. Mon avis: *bonne* *pratique*.
+Virtualenv est bien intégré par les serveurs WSGI. Mon avis: *oui*.
 
 *Un* *peu* *de* *lecture*
 
@@ -133,9 +115,11 @@ Virtualenv est bien intégré par les serveurs WSGI. Mon avis: *bonne* *pratique
 - [[https://pythonrants.wordpress.com/2013/12/06/why-i-hate-virtualenv-and-pip/][https://pythonrants.wordpress.com/2013/12/06/why-i-hate-virtualenv-and-pip/]]
 
 
-* Base de données relationnelle
+* ❦ Base de données relationnelle ❦
 
-Si vous n'avez pas de problème de scaling, prenez celle que vous voulez.
+Entrepôt pour des données liées les unes aux autres, permettant de les stocker et d'en récupérer des vues, via un language de requête (SQL).
+
+Si vous n'avez pas de problème de scaling, prenez *celle* *que* *vous* *voulez*.
 
 Les performances viennent avant tout d'un *bon* *schéma* et de *bons* *index*, pas directement de votre SGBD.
 
@@ -145,7 +129,7 @@ Les performances viennent avant tout d'un *bon* *schéma* et de *bons* *index*, 
 - [[https://sqlite.org/][SQLite]] (parfois, c'est suffisant)
 
 
-* Cache
+* ❦ Cache ❦
 
 Entrepôt pour des données éphémères, mais complexes/lourdes à calculer:
 
@@ -162,7 +146,7 @@ Entrepôt pour des données éphémères, mais complexes/lourdes à calculer:
     -- Phil Karlton
 
 
-* Redis vs Memcached
+* ❦ Redis vs Memcached ❦
 
 [[https://stackoverflow.com/questions/10558465/memcached-vs-redis][https://stackoverflow.com/questions/10558465/memcached-vs-redis]]
 
@@ -176,13 +160,13 @@ Redis.
 - Grande majorité des [[http://redis.io/commands/][opérations]] sont atomiques (thread safety)
 
 
-* Tâches de fond
+* ❦ Tâches de fond ❦
 
 Système distribué permettant d'envoyer des tâches asynchrones à des workers, en temps réel ou en différé.
 
 .image img/worker-queue.jpeg
 
-* Tâches de fond: les frameworks
+* ❦ Tâches de fond: les frameworks ❦
 
   Q: What deserves to be a background job?
   A: Anything that's not fast enough to be done synchronously in a safe and repeateable fashion.
@@ -196,29 +180,32 @@ Mesdames et messieurs, pour plus d'informations (et sans aucune gène):
 [[http://www.brl.ovh/slides/celery-intro/?theme=simple#/][http://brl.ovh/slides/celery-intro]]
 
 
-* L'intégration des tâches de fond dans l'application WSGI
+* ❦ Bonnes pratiques: intégrer des tâches de fond dans l'app WSGI ❦
 
 Une seule et même codebase.
 
-  - app1/
-      - app1/tasks.py
-      - app1/models.py
-  - app2/
-      - app2/tasks.py
-      - app2/models.py
+  |-- app1
+  |   |-- models.py
+  |   |-- tasks.py
+  |   `-- views.py
+  `-- app2
+      |-- models.py
+      |-- tasks.py
+      `-- views.py
+
 
 ⊕ Plus facile à déployer
-⊕ L'application WSGI frontend peut lancer des tâches de fond
+⊕ L'application WSGI frontend peut aussi lancer des tâches de fond
 ⊖ Les fichiers statiques (css, js, etc) sont inutilement déployés sur les workers
 
-Intégration de Celery avec:
+*Un* *peu* *de* *lecture*
 
-- [[http://celery.readthedocs.org/en/latest/django/first-steps-with-django.html][Django]]
-- [[http://flask.pocoo.org/docs/0.10/patterns/celery/][Flask]]
-- [[https://hynek.me/articles/using-celery-with-pyramid/][Pyramid]]
+- [[http://celery.readthedocs.org/en/latest/django/first-steps-with-django.html][Celery + Django]]
+- [[http://flask.pocoo.org/docs/0.10/patterns/celery/][Celery + Flask]]
+- [[https://hynek.me/articles/using-celery-with-pyramid/][Celery + Pyramid]]
 
 
-* File de message (Message queue)
+* ❦ File de message (Message queue) ❦
 
 - [[http://redis.io][Redis]] ♡ (Pub/Sub)
 - [[https://www.rabbitmq.com/][RabbitMQ]]
@@ -228,26 +215,26 @@ Les deux s'intègrent parfaitement avec Celery: [[http://celery.readthedocs.org/
 Redis Queue impose redis. Vous l'aviez probablement deviné, futés comme vous êtes.
 
 
-* Moteur de recherche
+* ❦ Moteur de recherche ❦
 
-Permet de faire des recherches complexes, facettées, textuelles.
+Permet de faire des recherches complexes, facettées, textuelles *rapidement*.
 
 .image img/mapado-searchbar.png
 
 - [[https://www.elastic.co/][elasticsearch]] ♡
 - [[https://lucene.apache.org/solr/][Solr]]
 - [[http://www.postgresql.org/docs/current/static/textsearch.html][PostgreSQL]] (recherche textuelle uniquement, mais bonnes performances!)
-- [[http://mongodb.org][mongoDB]] (recherche textuelle uniquement, mais bonnes performances!)
+- [[http://docs.mongodb.org/manual/core/index-text/][mongoDB]] (recherche textuelle uniquement, mais bonnes performances!)
 
 
 Je n'en dis pas plus, j'ai très peu d'expérience dans le domaine, désolé.
 
 *Un* *peu* *de* *lecture*
 
-- [[http://www.elastic.co/guide/en/elasticsearch/guide/current/index.html][http://www.elastic.co/guide/en/elasticsearch/guide/current/index.html]]
+- [[http://www.elastic.co/guide/en/elasticsearch/guide/current/index.html][Elasticsearch: The definitive guide]]
 - [[http://www.meetup.com/elasticsearchfr/][Meetup elasticsearch France]] (des évènements organisés à Lyon).
 
-* Base de données NoSQL
+* ❦ Base de données NoSQL ❦
 
 Permet de stocker des millions/milliards de *documents* "autosuffisants".
 
@@ -260,7 +247,7 @@ Montée en charge horizontale via du _sharding_ (ajouter des serveurs) → Websc
 - [[https://couchdb.apache.org/][CouchDB]]
 
 
-* Quelque conseils sur le NoSQL
+* ❦ Quelques conseils et retours sur le NoSQL ❦
 
 - Vos données sont relationnelles? Mettez les dans une BDD relationnelle. Ce n'est pas assez cool? Certes, mais ça va marcher.
 - Vous avez un peu de non relationnel dans vos données relationnelles? Utilisez les champs [[http://www.postgresql.org/docs/current/static/hstore.html][HStore]] de PostgreSQL.
@@ -272,7 +259,7 @@ Montée en charge horizontale via du _sharding_ (ajouter des serveurs) → Websc
 - Une très bonne comparaison de 20 bases NoSQL: [[http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis][http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis]]
 
 
-* Cache web
+* ❦ Cache web ❦
 
 Cache des pages HTML pour éviter qu'une requête n'atteigne votre serveur web.
 
@@ -286,7 +273,7 @@ Exemple: page d'accueil d'un site de presse grand public pour un utilisateur ano
 - [[http://www.pps.univ-paris-diderot.fr/~jch/software/polipo/][Polipo]]
 
 
-* Superviseur
+* ❦ Superviseur ❦
 
 Daemonise, monitore et contrôle un ensemble de processus: relance le processus en cas de crash, redirige les logs stdout/stderr, etc
 
@@ -306,12 +293,12 @@ Daemonise, monitore et contrôle un ensemble de processus: relance le processus 
 - [[http://supervisord.org/plugins.html][Plugins supervisor]]: contrôle de la mémoire de chaque processus, alerte mail/SMS en cas de crash, etc
 
 
-* Nodervisor
+* ❦ Interface de supervision centralisée: Nodervisor ❦
 
 .image img/nodervisor.png
 
 
-* Log des erreurs / exceptions
+* ❦ Log des erreurs / exceptions ❦
 
 Système centralisant les rapports d'erreur / d'exceptions de vos applications, permettant de rejouer les requêtes, de stocker le contexte, etc.
 
@@ -319,7 +306,7 @@ Système centralisant les rapports d'erreur / d'exceptions de vos applications, 
 - [[https://opbeat.com/][Opbeat]] (Django uniquement, monitore aussi les performances de votre application)
 
 
-* Index PyPI privé
+* ❦ Index PyPI privé ❦
 
 Permet d'héberger des packages python privés au sein de votre entreprise, tout en répliquant PyPI localement.
 
@@ -327,20 +314,21 @@ Permet d'héberger des packages python privés au sein de votre entreprise, tout
 - [[https://github.com/pypiserver/pypiserver][PyPIServer]]
 
   $ export PIP_INDEX_URL=http://myprivatepypi.example.com
-  $ pip install someprivatepackage
-  $ pip install requests
+  $ pip install someprivatepackage  # tape dans votre index privé
+  $ pip install requests   # tape dans PyPI
 
 
-* Autres sujets (non abordés, faute de temps et d'expérience)
+* ❦ Autres sujets (non abordés, faute de temps et d'expérience) ❦
 
-- Logging/Analyse de log: (rsyslog → elasticsearch → [[https://www.elastic.co/products/logstash][Logstash]]) / [[https://www.loggly.com/][Loggly]]
-- Monitoring: Munin, nagios, graphite... Quelqu'un connaît t-il l'outil magique?
+- Logging/Analyse de log: (rsyslog/nsyslogg → elasticsearch → [[https://www.elastic.co/products/logstash][Logstash]]) / [[https://www.loggly.com/][Loggly]]
+- Monitoring: Munin, nagios, graphite, + monitoring spécifique (ex: Flower pour Celery)... Quelqu'un connaît t-il l'outil magique?
 - Load balancer (répartit les requêtes entres les serveurs): HaProxy
 
+.image img/loadbalancer.gif
 
-* Conclusions
+* ❦ Conclusions ❦
 
-Il peut y avoir *beaucoup* d'outils à mettre en place. Essayez de pas céder à l'effet de mode et mutualisez les outils déjà installés.
+Il peut y avoir *beaucoup* d'outils à mettre en place. Essayez de pas céder à l'effet de mode et *mutualisez* les outils déjà installés, si possible.
 
 Exemples:
 
@@ -350,10 +338,12 @@ Exemples:
 
 Pourquoi?
 
-- Moins d'outils = infrastructure moins complexe = maintenance plus facile
+- Moins d'outils = infrastructure moins complexe = maintenance plus facile et moins de pannes
 - Courbe d'apprentissage plus faible
 
 
-* Conclusions
+* ❦ Conclusions ❦
 
-Réfléchissez à la possibilité d'utiliser des services externes si nécessaire
+- Monitorez tous vous outils
+- Supervisez tous vos outils (pour voir pourquoi, simulez un crash en rebootant vos machines de production)
+- Réfléchissez à la possibilité d'utiliser des services externes si nécessaire
