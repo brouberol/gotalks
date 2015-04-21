@@ -169,6 +169,7 @@ Système distribué permettant d'envoyer des tâches asynchrones à des workers,
 
 - [[http://celery.readthedocs.org/][Celery]] ♡
 - [[http://python-rq.org/][Redis Queue / RQ]]
+- [[https://nameko.readthedocs.org/en/latest/][Nameko]]
 
 Celery vs RQ ≃ Django vs Flask
 
