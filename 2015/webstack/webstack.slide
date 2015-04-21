@@ -298,7 +298,7 @@ Daemonise, monitore et contrôle un ensemble de processus: relance le processus 
 
 Système centralisant les rapports d'erreur / d'exceptions de vos applications, permettant de rejouer les requêtes, de stocker le contexte, etc.
 
-- [[https://getsentry.com/welcome/][Sentry]] (tout type d'application, tout langage)
+- [[https://getsentry.com/welcome/][Sentry]] (tout type d'application, tout langage, selh-hostable)
 - [[https://opbeat.com/][Opbeat]] (Django uniquement, monitore aussi les performances de votre application)
 
 
